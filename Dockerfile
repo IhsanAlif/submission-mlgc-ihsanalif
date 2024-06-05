@@ -1,22 +1,21 @@
-FROM node:18.20.2
+FROM node:buster-slim
 
-WORKDIR /usr/src/app
+ENV NODE_ENV=production
+ENV PORT=8080
+ENV MODEL_URL='https://storage.googleapis.com/model_ml_dicodingsubmission_tutorial/model.json'
 
-# Copy package.json and package-lock.json
-COPY package*.json ./
-
-# Install dependencies
-RUN npm install
-
-# Copy Google application credentials
-COPY ihsanalif-credentials.json .
-
-# Set environment variables
-ENV MODEL_URL='https://storage.googleapis.com/modelml-submission-mlgc-ihsanalif/model.json'
-ENV GOOGLE_APPLICATION_CREDENTIALS=ihsanalif-credentials.json
-
-# Copy the rest of the application code
 COPY . .
 
-# Start the application
-CMD [ "npm", "run", "start" ]
+RUN apt-get update && \
+    apt-get install -y build-essential \
+    wget \
+    python3 \
+    make \
+    gcc \
+    libc6-dev
+
+RUN npm install
+
+EXPOSE 8080
+
+CMD [ "npm", "run", "prod" ]
